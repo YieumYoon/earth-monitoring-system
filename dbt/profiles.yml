@@ -1,0 +1,12 @@
+earth_monitoring:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: postgres
+      password: postgres
+      port: 5432
+      dbname: earth_monitoring
+      schema: processed
+      threads: 4

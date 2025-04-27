@@ -1,0 +1,7 @@
+# Environment variables
+.env
+*/.env
+
+# Avoid committing any files that might contain API keys
+*_key*
+*_secret*
