@@ -74,18 +74,24 @@ services:
       # - ./data_collection:/opt/airflow/data_collection
       - ./dbt:/opt/airflow/dbt
     command: scheduler
-  # data-collector:
-  #   build:
-  #     context: ./data_collection
-  #     dockerfile: Dockerfile
-  #   platform: linux/amd64
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   volumes:
-  #     - ./data_collection:/app
-  #   env_file:
-  #     - ./data_collection/.env
+
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.9
+    container_name: earth_monitoring_dbt
+    platform: linux/amd64
+    depends_on:
+      - postgres
+    environment:
+      DBT_PROFILES_DIR: /dbt
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: earth_monitoring
+    volumes:
+      - ./dbt:/dbt
+    working_dir: /dbt
+    entrypoint: ["tail", "-f", "/dev/null"]
 
 
 volumes:

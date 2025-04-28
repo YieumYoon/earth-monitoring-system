@@ -3,10 +3,10 @@ earth_monitoring:
   outputs:
     dev:
       type: postgres
-      host: localhost
+      host: postgres
       user: postgres
       password: postgres
       port: 5432
       dbname: earth_monitoring
-      schema: processed
+      schema: public
       threads: 4

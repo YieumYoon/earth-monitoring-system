@@ -5,3 +5,8 @@
 # Avoid committing any files that might contain API keys
 *_key*
 *_secret*
+
+# avoid committing logs
+airflow/logs
+dbt/logs
+

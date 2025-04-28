@@ -6,13 +6,22 @@ from pandas import json_normalize
 from airflow.hooks.postgres_hook import PostgresHook
 import pandas as pd
 
-def extract_and_store_openaq():
+def extract_and_store_openaq_location():
     dotenv.load_dotenv()
     API_KEY = os.environ.get('OPENAQ_API_KEY')
     client = OpenAQ(api_key=API_KEY)
-    response = client.locations.list(bbox=[-0.464172, 5.449908, 0.030212, 5.691491])
+    response = client.locations.list(bbox=[126.914352, 37.520752, 127.051393, 37.607372])
+    # Check API rate limit headers
+    if hasattr(response, 'headers'):
+        headers = response.headers
+        remaining = getattr(headers, 'x_ratelimit_remaining', None)
+        limit = getattr(headers, 'x_ratelimit_limit', None)
+        if remaining is not None and int(remaining) == 0:
+            raise ValueError(f"OpenAQ API rate limit exceeded: limit={limit}, remaining={remaining}")
     data = response.dict()
     df = json_normalize(data['results'])
+    if df.empty:
+        raise ValueError("No data fetched from OpenAQ API! Possible API or URL issue.")
     df = df.where(pd.notnull(df), None)  # Replace NaN with None
 
     pg_hook = PostgresHook(postgres_conn_id='postgres_default')
@@ -70,4 +79,4 @@ def extract_and_store_openaq():
     client.close()
 
 if __name__ == "__main__":
-    extract_and_store_openaq()
+    extract_and_store_openaq_location()

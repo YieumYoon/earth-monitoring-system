@@ -19,5 +19,5 @@ models:
   earth_monitoring:
     staging:
       +materialized: view
-    mart:
+    process_location:
       +materialized: table
