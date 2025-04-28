@@ -1,0 +1,24 @@
+[2025-04-28T16:43:10.480+0000] {taskinstance.py:1103} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: earth_monitoring_system.run_dbt_transformations manual__2025-04-28T16:42:58.918391+00:00 [queued]>
+[2025-04-28T16:43:10.497+0000] {taskinstance.py:1103} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: earth_monitoring_system.run_dbt_transformations manual__2025-04-28T16:42:58.918391+00:00 [queued]>
+[2025-04-28T16:43:10.498+0000] {taskinstance.py:1308} INFO - Starting attempt 1 of 2
+[2025-04-28T16:43:10.529+0000] {taskinstance.py:1327} INFO - Executing <Task(BashOperator): run_dbt_transformations> on 2025-04-28 16:42:58.918391+00:00
+[2025-04-28T16:43:10.590+0000] {standard_task_runner.py:57} INFO - Started process 388 to run task
+[2025-04-28T16:43:10.611+0000] {standard_task_runner.py:84} INFO - Running: ['airflow', 'tasks', 'run', 'earth_monitoring_system', 'run_dbt_transformations', 'manual__2025-04-28T16:42:58.918391+00:00', '--job-id', '6', '--raw', '--subdir', 'DAGS_FOLDER/earth_monitoring_dag.py', '--cfg-path', '/tmp/tmp51rzztqd']
+[2025-04-28T16:43:10.618+0000] {standard_task_runner.py:85} INFO - Job 6: Subtask run_dbt_transformations
+[2025-04-28T16:43:10.692+0000] {logging_mixin.py:150} WARNING - /home/airflow/.local/lib/python3.10/site-packages/airflow/settings.py:195 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-04-28T16:43:10.848+0000] {task_command.py:410} INFO - Running <TaskInstance: earth_monitoring_system.run_dbt_transformations manual__2025-04-28T16:42:58.918391+00:00 [running]> on host 33402e959fd4
+[2025-04-28T16:43:11.375+0000] {taskinstance.py:1545} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='earth_monitoring_system' AIRFLOW_CTX_TASK_ID='run_dbt_transformations' AIRFLOW_CTX_EXECUTION_DATE='2025-04-28T16:42:58.918391+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-04-28T16:42:58.918391+00:00'
+[2025-04-28T16:43:11.379+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-04-28T16:43:11.381+0000] {subprocess.py:75} INFO - Running command: ['/bin/bash', '-c', 'cd /opt/airflow/dbt && dbt run']
+[2025-04-28T16:43:11.426+0000] {subprocess.py:86} INFO - Output:
+[2025-04-28T16:43:11.683+0000] {subprocess.py:93} INFO - /bin/bash: line 1: dbt: command not found
+[2025-04-28T16:43:11.685+0000] {subprocess.py:97} INFO - Command exited with return code 127
+[2025-04-28T16:43:11.752+0000] {taskinstance.py:1824} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/operators/bash.py", line 210, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 127.
+[2025-04-28T16:43:11.759+0000] {taskinstance.py:1345} INFO - Marking task as UP_FOR_RETRY. dag_id=earth_monitoring_system, task_id=run_dbt_transformations, execution_date=20250428T164258, start_date=20250428T164310, end_date=20250428T164311
+[2025-04-28T16:43:11.821+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 6 for task run_dbt_transformations (Bash command failed. The command returned a non-zero exit code 127.; 388)
+[2025-04-28T16:43:11.866+0000] {local_task_job_runner.py:225} INFO - Task exited with return code 1
+[2025-04-28T16:43:11.994+0000] {taskinstance.py:2653} INFO - 0 downstream tasks scheduled from follow-on schedule check

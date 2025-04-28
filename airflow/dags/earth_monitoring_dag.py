@@ -3,6 +3,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
+from extract_openaq_raw import extract_and_store_openaq
 
 # Define default arguments for the DAG
 default_args = {
@@ -31,15 +32,14 @@ start = EmptyOperator(
     dag=dag,
 )
 
-# Task 2: Fetch air quality data from OpenAQ
-fetch_climate_data = BashOperator(
-    task_id='fetch_climate_data',
-    bash_command='cd /opt/airflow/data_collection && python fetch_historical_openaq.py',
+# Task 2: Fetch air quality data from OpenAQ using PythonOperator
+fetch_air_quality = PythonOperator(
+    task_id='fetch_air_quality',
+    python_callable=extract_and_store_openaq,
     dag=dag,
 )
 
-# Task 3: Placeholder for NOAA climate data
-# This will be implemented in the next phase
+# Task 3: Placeholder for NOAA climate data (still empty)
 fetch_climate_data = EmptyOperator(
     task_id='fetch_climate_data',
     dag=dag,

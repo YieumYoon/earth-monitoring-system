@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgis/postgis:13-3.1
+    image: postgres:13
     platform: linux/amd64
     container_name: earth_monitoring_postgres
     environment:
@@ -18,24 +18,30 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      postgres -c "max_connections=100" -c "shared_preload_libraries=postgis-3"
+      postgres -c "max_connections=100"
 
   airflow-webserver:
-    image: apache/airflow:2.6.3
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
     platform: linux/amd64
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
+      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
+      - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
+      
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/config:/opt/airflow/config
-      - ./data_collection:/opt/airflow/data_collection
+      # - ./data_collection:/opt/airflow/data_collection
       - ./dbt:/opt/airflow/dbt
     ports:
       - "8080:8080"
@@ -47,13 +53,17 @@ services:
       retries: 5
 
   airflow-scheduler:
-    image: apache/airflow:2.6.3
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
     platform: linux/amd64
     depends_on:
       - airflow-webserver
     environment:
+      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
+      - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
@@ -61,20 +71,21 @@ services:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/config:/opt/airflow/config
-      - ./data_collection:/opt/airflow/data_collection
+      # - ./data_collection:/opt/airflow/data_collection
       - ./dbt:/opt/airflow/dbt
     command: scheduler
-  data-collector:
-    build:
-      context: ./data_collection
-      dockerfile: Dockerfile
-    platform: linux/amd64
-    depends_on:
-      - postgres
-    volumes:
-      - ./data_collection:/app
-    env_file:
-      - ./data_collection/.env
+  # data-collector:
+  #   build:
+  #     context: ./data_collection
+  #     dockerfile: Dockerfile
+  #   platform: linux/amd64
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./data_collection:/app
+  #   env_file:
+  #     - ./data_collection/.env
 
 
 volumes:

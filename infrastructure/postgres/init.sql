@@ -2,40 +2,31 @@
 CREATE SCHEMA IF NOT EXISTS raw;
 CREATE SCHEMA IF NOT EXISTS processed;
 
--- Create tables for air quality data
+-- Create table for air quality data matching OpenAQ API response columns exactly
 CREATE TABLE IF NOT EXISTS raw.air_quality (
     id SERIAL PRIMARY KEY,
-    location_id TEXT,
-    city TEXT,
-    country TEXT,
+    name TEXT,
+    locality TEXT,
+    timezone TEXT,
+    is_mobile BOOLEAN,
+    is_monitor BOOLEAN,
+    instruments JSONB,
+    sensors JSONB,
+    bounds JSONB,
+    distance FLOAT,
+    datetime_first TEXT,
+    datetime_last TEXT,
+    country_id INTEGER,
+    country_code TEXT,
+    country_name TEXT,
+    owner_id INTEGER,
+    owner_name TEXT,
+    provider_id INTEGER,
+    provider_name TEXT,
     latitude FLOAT,
     longitude FLOAT,
-    parameter TEXT,
-    value FLOAT,
-    unit TEXT,
-    timestamp TIMESTAMP,
-    source_name TEXT,
-    fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    datetime_first_utc TEXT,
+    datetime_first_local TEXT,
+    datetime_last_utc TEXT,
+    datetime_last_local TEXT
 );
-
--- Enable PostGIS extension
-CREATE EXTENSION IF NOT EXISTS postgis;
-
--- Add geometry column for spatial analysis
-SELECT AddGeometryColumn('raw', 'air_quality', 'geom', 4326, 'POINT', 2);
-
--- Create index for spatial queries
-CREATE INDEX air_quality_geom_idx ON raw.air_quality USING GIST(geom);
-
--- Create trigger to automatically update the geometry column
-CREATE OR REPLACE FUNCTION update_geom_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.geom := ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_air_quality_geom
-BEFORE INSERT OR UPDATE ON raw.air_quality
-FOR EACH ROW EXECUTE PROCEDURE update_geom_column();
