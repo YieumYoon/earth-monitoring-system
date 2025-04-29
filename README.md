@@ -46,6 +46,41 @@ The system is built using Docker and consists of the following components:
   - `psycopg2-binary==2.9.9`
 - Rebuild containers after changing requirements: `docker compose build --no-cache && docker compose up -d`
 
+## Airflow Troubleshooting
+
+If you encounter issues such as missing tables (e.g., "relation 'connection' does not exist") or cannot log in to the Airflow UI:
+
+1. **Check Database Connection:**
+   - Ensure all Airflow services and configs point to the same Postgres database.
+2. **Run Migrations:**
+   - Run inside the webserver container:
+     ```bash
+     docker exec -it earth-monitoring-system-airflow-webserver-1 airflow db migrate
+     # or
+     docker exec -it earth-monitoring-system-airflow-webserver-1 airflow db upgrade
+     ```
+3. **Reset Metadata DB (if needed):**
+   - WARNING: This will wipe all Airflow metadata (DAG runs, users, etc.).
+     ```bash
+     docker exec -it earth-monitoring-system-airflow-webserver-1 airflow db reset -y
+     ```
+4. **Recreate Admin User:**
+   - After a reset, you must recreate the admin user:
+     ```bash
+     docker compose run airflow-webserver airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+     ```
+5. **Restart Airflow Containers:**
+     ```bash
+     docker compose restart
+     ```
+6. **Orphan Containers:**
+   - If you see warnings about orphan containers, clean them up with:
+     ```bash
+     docker compose down --remove-orphans
+     ```
+7. **Check Logs:**
+   - Always check the Airflow webserver logs for detailed error messages.
+
 ## Directory Structure
 
 ```

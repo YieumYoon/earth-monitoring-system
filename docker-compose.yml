@@ -32,7 +32,7 @@ services:
       # - OPENAQ_API_KEY=${OPENAQ_API_KEY}
       - DATA_PREFIX=/opt/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
@@ -65,7 +65,7 @@ services:
       # - OPENAQ_API_KEY=${OPENAQ_API_KEY}
       - DATA_PREFIX=/opt/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
