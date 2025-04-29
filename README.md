@@ -10,12 +10,14 @@ A data pipeline for collecting, processing, and visualizing environmental data f
 - **Airflow connection**: Configured via Airflow UI and `docker-compose.yml` with `DATA_PREFIX` for robust CSV path resolution.
 - **Data ingestion**: Python scripts and Airflow DAGs load and clean Kaggle CSV data into Postgres staging tables using pandas and SQLAlchemy.
 - **Testing**: Ingestion scripts tested both locally and in Dockerized Airflow, verified with manual queries and Airflow logs.
+- **SQL transformation**: Created and tested `transform_seoul_data.sql` to produce a clean, analysis-ready table in Postgres.
+- **Airflow transformation task**: Added a PostgresOperator step to automate SQL transformation in the DAG and verified end-to-end orchestration.
+- **Visualization**: Connected Tableau to Postgres, built multiple analysis dashboards (scatter plots, seasonal trends, correlation plots, etc.), and implemented advanced interactivity (filters, drilldown, viz-in-tooltip, popup-style daily detail views).
+- **Documentation**: Updated development plan to reflect completed pipeline, analysis, and dashboard features.
 
 ### Next Steps
-- **SQL transformation**: Write and test `transform_seoul_data.sql` to create a clean, analysis-ready table.
-- **Airflow transformation task**: Add a PostgresOperator step to automate SQL transformation in the DAG.
-- **Visualization**: Connect Tableau to Postgres and build analysis dashboards.
-- **Documentation**: Update development plan and report progress, challenges, and solutions.
+- **Documentation**: Finalize project report and presentation slides (see `development_plan.md`).
+- **Polish dashboards**: Refine dashboard layout and add explanatory text if needed.
 
 ## Project Overview
 
@@ -24,7 +26,7 @@ The Earth(Seoul) Monitoring System is a comprehensive data pipeline designed to:
 1. Collect environmental data from multiple sources (air quality, climate data)
 2. Process and transform the data
 3. Orchestrate workflows with Apache Airflow
-4. Visualize the results with Tableau
+4. Visualize the results with Tableau (including advanced interactive dashboards)
 
 ## System Architecture
 
@@ -118,7 +120,7 @@ earth-monitoring-system/
    ```
 3. **Access Airflow UI:**
    - Go to http://localhost:8080 (admin/admin)
-4. **Run ingestion DAG:**
+4. **Run ingestion and transformation DAG:**
    - Trigger manually from the Airflow UI.
    - Monitor logs for task success.
 5. **Connect Tableau or psql to Postgres:**
@@ -127,6 +129,9 @@ earth-monitoring-system/
    - Database: earth_monitoring
    - Username: postgres
    - Password: postgres
+6. **Tableau Dashboard:**
+   - Open Tableau, connect to the processed/clean tables.
+   - Explore dashboards: scatter plots, seasonal trends, and interactive features (filters, drilldown, viz-in-tooltip, daily popups).
 
 ## Getting Started
 
@@ -139,6 +144,8 @@ earth-monitoring-system/
 
 ### Database Management
 - Connect to PostgreSQL: `docker exec -it earth_monitoring_postgres psql -U postgres -d earth_monitoring`
+- For troubleshooting Airflow or database issues, see the Troubleshooting section above.
+- When exploring the Tableau dashboard, use the filters and interactive features to drill down into specific data points and gain deeper insights.
 
 ## License
 MIT

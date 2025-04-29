@@ -2,6 +2,9 @@
 CREATE SCHEMA IF NOT EXISTS raw;
 CREATE SCHEMA IF NOT EXISTS processed;
 
+DROP TABLE IF EXISTS raw.seoul_air_quality_2017_2019;
+DROP TABLE IF EXISTS raw.seoul_weather_2017_2019;
+
 --2017-2019
 CREATE TABLE raw.seoul_air_quality_2017_2019 (
     measurement_date TIMESTAMP,
@@ -17,7 +20,7 @@ CREATE TABLE raw.seoul_air_quality_2017_2019 (
     pm25 DOUBLE PRECISION
 );
 
-CREATE TABLE raw.seoul_weather_2016_2019 (
+CREATE TABLE raw.seoul_weather_2017_2019 (
     name TEXT,
     datetime TIMESTAMP,
     tempmax DOUBLE PRECISION,

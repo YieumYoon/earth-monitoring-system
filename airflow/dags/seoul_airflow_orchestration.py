@@ -2,8 +2,12 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.postgres_operator import PostgresOperator
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from ingest_seoul_csv import ingest_csv_to_postgres, ingest_multiple_csv_to_postgres
+from transform_seoul_data import transform_air_quality, transform_weather, transform_final_joined
+
 
 # Define default arguments for the DAG
 default_args = {
@@ -73,24 +77,24 @@ ingest_weather_task = PythonOperator(
     dag=seoul_air_quality_dag,
 )
 
-transform_air_quality_task = PostgresOperator(
+transform_air_quality_task = PythonOperator(
     task_id='transform_air_quality',
-    postgres_conn_id='postgres_default',
-    sql='transform_seoul_air_quality_data.sql',
+    python_callable=transform_air_quality,
+    provide_context=True,
     dag=seoul_air_quality_dag,
 )
 
-transform_weather_task = PostgresOperator(
+transform_weather_task = PythonOperator(
     task_id='transform_weather',
-    postgres_conn_id='postgres_default',
-    sql='transform_seoul_weather_data.sql',
+    python_callable=transform_weather,
+    provide_context=True,
     dag=seoul_air_quality_dag,
 )
 
-transform_final_joined_task = PostgresOperator(
+transform_final_joined_task = PythonOperator(
     task_id='transform_final_joined',
-    postgres_conn_id='postgres_default',
-    sql='transform_seoul_final_joined_table.sql',
+    python_callable=transform_final_joined,
+    provide_context=True,
     dag=seoul_air_quality_dag,
 )
 
@@ -102,5 +106,5 @@ end = EmptyOperator(
 # Run both ingestion tasks in parallel after start, then run transformations sequentially (air_quality -> weather -> final_joined)
 start >> [ingest_air_quality_task, ingest_weather_task]
 [ingest_air_quality_task >> transform_air_quality_task]
-ingest_weather_task >> transform_weather_task
+[ingest_weather_task >> transform_weather_task]
 [transform_air_quality_task, transform_weather_task] >> transform_final_joined_task >> end
