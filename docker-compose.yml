@@ -29,7 +29,8 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      # - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      - DATA_PREFIX=/opt/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
@@ -42,7 +43,8 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/config:/opt/airflow/config
       # - ./data_collection:/opt/airflow/data_collection
-      - ./dbt:/opt/airflow/dbt
+      # - ./dbt:/opt/airflow/dbt
+      - ./kaggle_data_source:/opt/airflow/kaggle_data_source
     ports:
       - "8080:8080"
     command: webserver
@@ -60,38 +62,41 @@ services:
     depends_on:
       - airflow-webserver
     environment:
-      - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      # - OPENAQ_API_KEY=${OPENAQ_API_KEY}
+      - DATA_PREFIX=/opt/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql+psycopg2://postgres:postgres@postgres:5432/earth_monitoring
       - AIRFLOW__CORE__FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False
+      
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/config:/opt/airflow/config
       # - ./data_collection:/opt/airflow/data_collection
       - ./dbt:/opt/airflow/dbt
+      - ./kaggle_data_source:/opt/airflow/kaggle_data_source
     command: scheduler
 
-  dbt:
-    image: ghcr.io/dbt-labs/dbt-postgres:1.7.9
-    container_name: earth_monitoring_dbt
-    platform: linux/amd64
-    depends_on:
-      - postgres
-    environment:
-      DBT_PROFILES_DIR: /dbt
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: earth_monitoring
-    volumes:
-      - ./dbt:/dbt
-    working_dir: /dbt
-    entrypoint: ["tail", "-f", "/dev/null"]
+  # dbt:
+  #   image: ghcr.io/dbt-labs/dbt-postgres:1.7.9
+  #   container_name: earth_monitoring_dbt
+  #   platform: linux/amd64
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     DBT_PROFILES_DIR: /dbt
+  #     POSTGRES_HOST: postgres
+  #     POSTGRES_PORT: 5432
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: earth_monitoring
+  #   volumes:
+  #     - ./dbt:/dbt
+  #   working_dir: /dbt
+  #   entrypoint: ["tail", "-f", "/dev/null"]
 
 
 volumes:

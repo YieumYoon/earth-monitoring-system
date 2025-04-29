@@ -8,5 +8,12 @@
 
 # avoid committing logs
 airflow/logs
+airflow/dags/__pycache__
 dbt/logs
+
+# avoid committing data
+kaggle_data_source
+
+# avoid committing development plan
+development_plan.md
 
