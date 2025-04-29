@@ -2,6 +2,86 @@
 
 A data pipeline for collecting, processing, and visualizing environmental data from multiple sources.
 
+<img width="858" alt="Image" src="https://github.com/user-attachments/assets/79f270e9-ed33-4174-89d8-2c7a47f716a4" />
+
+## Presentation
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/iWE8yVl6ryE/0.jpg)](https://www.youtube.com/watch?v=iWE8yVl6ryE)
+
+## Project Overview
+
+The Earth(Seoul) Monitoring System is a comprehensive data pipeline designed to:
+
+1. Collect environmental data from multiple sources (air quality, climate data)
+2. Process and transform the data
+3. Orchestrate workflows with Apache Airflow
+4. Visualize the results with Tableau (including advanced interactive dashboards)
+
+## Visualization
+
+Check Tableau Desktop file and database under **Tableau Desktop Files**
+
+## Getting Started
+
+### Prerequisites
+
+- Docker and Docker Compose
+- Tableau Desktop (for visualization)
+
+## Directory Structure
+
+```
+earth-monitoring-system/
+├── airflow/
+│   ├── dags/             # Airflow DAG definitions
+│   ├── logs/             # Airflow logs
+│   └── config/           # Airflow configuration
+├── infrastructure/
+│   └── postgres/
+│       └── init.sql      # PostgreSQL initialization script
+├── kaggle_data_source/   # Raw data (gitignored)
+│   ├── AirPollutionSeoul # unzip air seoul air polution data from Kaggle
+│   └── SeoulHistoricalWeatehrData # unzip seoul historical weather data
+├── docker-compose.yml    # Docker Compose configuration
+└── README.md
+```
+
+## Data Sources
+
+- [Air Pollution in Seoul (Kaggle)](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul)
+- [Seoul Historical Weather Data 2024 (Kaggle)](https://www.kaggle.com/datasets/alfredkondoro/seoul-historical-weather-data-2024)
+
+**Check Directory Structure and put the data source in the right folder**
+
+
+## Usage Quick Reference
+
+1. **Clone and start services:**
+   ```bash
+   git clone <repository-url>
+   cd earth-monitoring-system
+   docker compose up -d
+   ```
+2. **Initialize Airflow (first time):**
+   ```bash
+   docker compose run airflow-webserver airflow db init
+   docker compose run airflow-webserver airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+   ```
+3. **Access Airflow UI:**
+   - Go to http://localhost:8080 (admin/admin)
+4. **Run ingestion and transformation DAG:**
+   - Trigger manually from the Airflow UI.
+   - Monitor logs for task success.
+5. **Connect Tableau or psql to Postgres:**
+   - Host: localhost
+   - Port: 5432
+   - Database: earth_monitoring
+   - Username: postgres
+   - Password: postgres
+6. **Tableau Dashboard:**
+   - Open Tableau, connect to the processed/clean tables.
+   - Explore dashboards: scatter plots, seasonal trends, and interactive features 
+
 ## Progress & Milestones
 
 ### Completed
@@ -12,21 +92,8 @@ A data pipeline for collecting, processing, and visualizing environmental data f
 - **Testing**: Ingestion scripts tested both locally and in Dockerized Airflow, verified with manual queries and Airflow logs.
 - **SQL transformation**: Created and tested `transform_seoul_data.sql` to produce a clean, analysis-ready table in Postgres.
 - **Airflow transformation task**: Added a PostgresOperator step to automate SQL transformation in the DAG and verified end-to-end orchestration.
-- **Visualization**: Connected Tableau to Postgres, built multiple analysis dashboards (scatter plots, seasonal trends, correlation plots, etc.), and implemented advanced interactivity (filters, drilldown, viz-in-tooltip, popup-style daily detail views).
+- **Visualization**: Connected Tableau to Postgres, built multiple analysis dashboards (scatter plots, seasonal trends, correlation plots, etc.), and implemented advanced interactivity.
 - **Documentation**: Updated development plan to reflect completed pipeline, analysis, and dashboard features.
-
-### Next Steps
-- **Documentation**: Finalize project report and presentation slides (see `development_plan.md`).
-- **Polish dashboards**: Refine dashboard layout and add explanatory text if needed.
-
-## Project Overview
-
-The Earth(Seoul) Monitoring System is a comprehensive data pipeline designed to:
-
-1. Collect environmental data from multiple sources (air quality, climate data)
-2. Process and transform the data
-3. Orchestrate workflows with Apache Airflow
-4. Visualize the results with Tableau (including advanced interactive dashboards)
 
 ## System Architecture
 
@@ -82,70 +149,3 @@ If you encounter issues such as missing tables (e.g., "relation 'connection' doe
      ```
 7. **Check Logs:**
    - Always check the Airflow webserver logs for detailed error messages.
-
-## Directory Structure
-
-```
-earth-monitoring-system/
-├── airflow/
-│   ├── dags/             # Airflow DAG definitions
-│   ├── logs/             # Airflow logs
-│   └── config/           # Airflow configuration
-├── infrastructure/
-│   └── postgres/
-│       └── init.sql      # PostgreSQL initialization script
-├── kaggle_data_source/   # Raw data (gitignored)
-├── docker-compose.yml    # Docker Compose configuration
-├── README.md
-└── development_plan.md
-```
-
-## Data Sources
-
-- [Air Pollution in Seoul (Kaggle)](https://www.kaggle.com/datasets/bappekim/air-pollution-in-seoul)
-- [Seoul Historical Weather Data 2024 (Kaggle)](https://www.kaggle.com/datasets/alfredkondoro/seoul-historical-weather-data-2024)
-
-## Usage Quick Reference
-
-1. **Clone and start services:**
-   ```bash
-   git clone <repository-url>
-   cd earth-monitoring-system
-   docker compose up -d
-   ```
-2. **Initialize Airflow (first time):**
-   ```bash
-   docker compose run airflow-webserver airflow db init
-   docker compose run airflow-webserver airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
-   ```
-3. **Access Airflow UI:**
-   - Go to http://localhost:8080 (admin/admin)
-4. **Run ingestion and transformation DAG:**
-   - Trigger manually from the Airflow UI.
-   - Monitor logs for task success.
-5. **Connect Tableau or psql to Postgres:**
-   - Host: localhost
-   - Port: 5432
-   - Database: earth_monitoring
-   - Username: postgres
-   - Password: postgres
-6. **Tableau Dashboard:**
-   - Open Tableau, connect to the processed/clean tables.
-   - Explore dashboards: scatter plots, seasonal trends, and interactive features (filters, drilldown, viz-in-tooltip, daily popups).
-
-## Getting Started
-
-### Prerequisites
-
-- Docker and Docker Compose
-- Tableau Desktop (for visualization)
-
-## Maintenance
-
-### Database Management
-- Connect to PostgreSQL: `docker exec -it earth_monitoring_postgres psql -U postgres -d earth_monitoring`
-- For troubleshooting Airflow or database issues, see the Troubleshooting section above.
-- When exploring the Tableau dashboard, use the filters and interactive features to drill down into specific data points and gain deeper insights.
-
-## License
-MIT
