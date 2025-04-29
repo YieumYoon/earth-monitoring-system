@@ -26,7 +26,7 @@ def extract_and_store_openaq_location():
 
     pg_hook = PostgresHook(postgres_conn_id='postgres_default')
     insert_sql = """
-        INSERT INTO raw.air_quality (
+        INSERT INTO raw.openaq_location (
             name, locality, timezone, is_mobile, is_monitor, instruments, sensors, bounds, distance,
             datetime_first, datetime_last, country_id, country_code, country_name,
             owner_id, owner_name, provider_id, provider_name, latitude, longitude,

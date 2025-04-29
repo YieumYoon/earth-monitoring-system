@@ -1,8 +1,0 @@
-version: 2
-
-sources:
-  - name: raw
-    database: earth_monitoring
-    schema: raw
-    tables:
-      - name: openaq_location
